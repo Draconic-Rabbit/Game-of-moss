@@ -18,10 +18,15 @@ public class FlameThrower : MonoBehaviour
 
     [SerializeField] GameObject areaDebugDisplay;
 
+    [SerializeField] AudioClip lightingAudioClip;
+    [SerializeField] AudioPlayer audioPlayer;
+
+
     private void Awake()
     {
         flame.Stop();
         mossController = FindObjectOfType<MossController>();
+        audioPlayer = FindObjectOfType<AudioPlayer>();
     }
 
     // Start is called before the first frame update
@@ -45,7 +50,6 @@ public class FlameThrower : MonoBehaviour
         {
             firingCoroutine = FireContinuously();
             StartCoroutine(firingCoroutine);
-            flame.Play();
         }
         else if (!isFiring && firingCoroutine != null)
         {
@@ -57,6 +61,10 @@ public class FlameThrower : MonoBehaviour
 
     IEnumerator FireContinuously()
     {
+        audioPlayer.PlayLightFTclip();
+        yield return new WaitForSeconds(2.5f);
+        audioPlayer.PlayFireFTClip();
+        flame.Play();
         while (true)
         {
             Vector2 origin = transform.position;

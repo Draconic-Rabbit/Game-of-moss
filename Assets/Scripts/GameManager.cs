@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
         scoreKeeper.restartTimer();
         mossController.initGrid(gridSize);
         mossController.SpawnMossAt(new Point(15, 10));
+        mossController.SpawnMossAt(new Point(14, 9));
+        mossController.SpawnMossAt(new Point(14, 10));
+        mossController.SpawnMossAt(new Point(15, 9));
         mossController.StartMossExpansion();
     }
 
