@@ -33,4 +33,9 @@ public class AudioPlayer : MonoBehaviour
         audioSource.loop = loop;
         audioSource.Play();
     }
+
+    public void Stop()
+    {
+        audioSource.loop = false;
+    }
 }

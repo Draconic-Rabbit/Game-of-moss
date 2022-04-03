@@ -16,6 +16,13 @@ public class PlayerMovement : MonoBehaviour
     Vector2 minBounds;
     Vector2 maxBounds;
 
+    [SerializeField] SpriteRenderer bodySR;
+    string lookDirection = "Down";
+    [SerializeField] Sprite spriteLeft;
+    [SerializeField] Sprite spriteUp;
+    [SerializeField] Sprite spriteRight;
+    [SerializeField] Sprite spriteDown;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,7 +49,40 @@ public class PlayerMovement : MonoBehaviour
     private void LookAt()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        body.transform.rotation = Quaternion.LookRotation(Vector3.forward, mousePos - transform.position);
+        Quaternion test = Quaternion.LookRotation(Vector3.forward, mousePos - transform.position);
+        // Debug.Log(test.eulerAngles);
+        if (test.eulerAngles.z > 45 && test.eulerAngles.z <= 135)
+        {
+            if (lookDirection != "Left")
+            {
+                lookDirection = "Left";
+                bodySR.sprite = spriteLeft;
+            }
+        }
+        if (test.eulerAngles.z > 135 && test.eulerAngles.z <= 225)
+        {
+            if (lookDirection != "Down")
+            {
+                lookDirection = "Down";
+                bodySR.sprite = spriteDown;
+            }
+        }
+        if (test.eulerAngles.z > 225 && test.eulerAngles.z <= 315)
+        {
+            if (lookDirection != "Right")
+            {
+                lookDirection = "Right";
+                bodySR.sprite = spriteRight;
+            }
+        }
+        if (test.eulerAngles.z <= 45 || test.eulerAngles.z > 315)
+        {
+            if (lookDirection != "Up")
+            {
+                lookDirection = "Up";
+                bodySR.sprite = spriteUp;
+            }
+        }
     }
 
     private void Move()

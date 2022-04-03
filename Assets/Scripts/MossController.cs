@@ -22,17 +22,24 @@ public class MossController : MonoBehaviour
 
     private void Awake()
     {
-        mossTexture = new Texture2D(1, 1);
-        mossTexture.wrapMode = TextureWrapMode.Clamp;
-        mossTexture.filterMode = FilterMode.Point;
-        mossTexture.Apply();
+
     }
+
 
     public void initGrid(Point gridSize)
     {
         grid = new Grid(gridSize);
-        mossTexture = new Texture2D(gridSize.x * cellDisplaySize, gridSize.y * cellDisplaySize);
+        PrepareMossTexture(gridSize.x * cellDisplaySize, gridSize.y * cellDisplaySize);
         initialized = true;
+    }
+
+    private void PrepareMossTexture(int width, int height)
+    {
+        mossTexture = new Texture2D(width, height);
+        mossTexture.wrapMode = TextureWrapMode.Clamp;
+        mossTexture.filterMode = FilterMode.Point;
+        mossTexture.alphaIsTransparency = true;
+        mossTexture.Apply();
     }
 
     // Update is called once per frame
@@ -170,7 +177,7 @@ public class MossController : MonoBehaviour
         int colorsSize = cellDisplaySize * cellDisplaySize;
         Color[] aliveColors = mossNiceTexture.GetPixels();
         Color[] deadColors = new Color[colorsSize];
-        Array.Fill<Color>(deadColors, Color.gray);
+        Array.Fill<Color>(deadColors, new Color32(0, 0, 0, 0));
         Color[] colors = new Color[colorsSize];
         foreach (Cell cell in grid.Cells)
         {

@@ -16,6 +16,8 @@ public class FlameThrower : MonoBehaviour
 
     MossController mossController;
     [SerializeField] ParticleSystem flame;
+    [SerializeField]
+    Transform FlameThrowerDirector;
 
     [SerializeField] GameObject areaDebugDisplay;
 
@@ -42,7 +44,12 @@ public class FlameThrower : MonoBehaviour
         isFiring = value.isPressed;
     }
 
-
+    // should be use to only affect sprite, not parent
+    private void DirectFlameThrow()
+    {
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        FlameThrowerDirector.rotation = Quaternion.LookRotation(Vector3.forward, mousePos - transform.position);
+    }
 
     // Update is called once per frame
     void Update()
@@ -57,7 +64,10 @@ public class FlameThrower : MonoBehaviour
             StopCoroutine(firingCoroutine);
             firingCoroutine = null;
             flame.Stop();
+            audioPlayer.Stop();
         }
+
+        DirectFlameThrow();
     }
 
     IEnumerator FireContinuously()
