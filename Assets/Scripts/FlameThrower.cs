@@ -9,6 +9,7 @@ public class FlameThrower : MonoBehaviour
     bool isFiring = false;
     IEnumerator firingCoroutine;
 
+    [SerializeField] float lightingDuration = 2.5f;
     [SerializeField] float damageInterval = 0.1f;
     [SerializeField] float flameDistance = 1.5f;
     [SerializeField] float flameRadius = 0.5f;
@@ -62,7 +63,7 @@ public class FlameThrower : MonoBehaviour
     IEnumerator FireContinuously()
     {
         audioPlayer.PlayLightFTclip();
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(lightingDuration);
         audioPlayer.PlayFireFTClip();
         flame.Play();
         while (true)
