@@ -19,10 +19,14 @@ public class MossController : MonoBehaviour
     Coroutine mossExpansionCoroutine;
     [SerializeField] public float mossExpansionChance = 0.75f;
     [SerializeField] public float mossExpansionSpeed = 0.25f;
+    Coroutine mossExpansionModifier;
+    float currentMossExpansionChance;
+    float currentmossExpansionSpeed;
 
-    private void Awake()
+    private void Start()
     {
-
+        currentMossExpansionChance = mossExpansionChance;
+        currentmossExpansionSpeed = mossExpansionSpeed;
     }
 
 
@@ -38,7 +42,7 @@ public class MossController : MonoBehaviour
         mossTexture = new Texture2D(width, height);
         mossTexture.wrapMode = TextureWrapMode.Clamp;
         mossTexture.filterMode = FilterMode.Point;
-        mossTexture.alphaIsTransparency = true;
+        // mossTexture.alphaIsTransparency = true;
         mossTexture.Apply();
     }
 
@@ -53,11 +57,13 @@ public class MossController : MonoBehaviour
     public void StartMossExpansion()
     {
         mossExpansionCoroutine = StartCoroutine(ExpandMossCoroutine());
+        mossExpansionModifier = StartCoroutine(ModifyParamsCoroutine());
     }
 
     public void StopMossExpansion()
     {
         StopCoroutine(mossExpansionCoroutine);
+        StopCoroutine(mossExpansionModifier);
     }
 
     internal bool mossStatusAtWorldPos(Vector3 worldPos)
@@ -94,20 +100,68 @@ public class MossController : MonoBehaviour
         {
             CalcutateMossExpandion();
             refreshTexture = true;
-            yield return new WaitForSeconds(mossExpansionSpeed);
+            yield return new WaitForSeconds(currentmossExpansionSpeed);
         }
+    }
+
+    IEnumerator ModifyParamsCoroutine()
+    {
+        // 2 second big expansion to let moss a chance
+        currentMossExpansionChance = 0.79f;
+        currentmossExpansionSpeed = 0.22f;
+        yield return new WaitForSeconds(2f);
+        while (true)
+        {
+            SetNewMossParams();
+            yield return new WaitForSeconds(4f);
+        }
+    }
+
+    void SetNewMossParams()
+    {
+        int mossCover = getMossCoverPercent();
+        // Moss loose, let player finish
+        if (mossCover <= 2)
+        {
+            currentMossExpansionChance = mossExpansionChance;
+            currentmossExpansionSpeed = mossExpansionSpeed;
+            return;
+        }
+        // High Expansion Defense mode
+        if (mossCover <= 4)
+        {
+            currentMossExpansionChance = mossExpansionChance + Random.Range(0.10f, 0.15f);
+            currentmossExpansionSpeed = mossExpansionSpeed - Random.Range(0.05f, 0.10f);
+            return;
+        }
+        // High Expansion : Finish Him
+        if (mossCover > 55)
+        {
+            currentMossExpansionChance = mossExpansionChance + Random.Range(0.1f, 0.22f);
+            currentmossExpansionSpeed = mossExpansionSpeed - Random.Range(0.15f, 0.2f);
+            return;
+        }
+
+        currentMossExpansionChance = mossExpansionChance;
+        currentmossExpansionSpeed = mossExpansionSpeed;
     }
 
     public int getMossCoverPercent()
     {
         int cellsCount = grid.GridSize.x * grid.GridSize.y;
+        int mossCount = GetMossCellCount();
+        int mossCover = Mathf.CeilToInt((float)mossCount / cellsCount * 100);
+        return mossCover;
+    }
+
+    private int GetMossCellCount()
+    {
         int mossCount = 0;
         foreach (Cell cell in grid.Cells)
         {
             if (cell.IsAlive) mossCount++;
         }
-        int mossCover = Mathf.CeilToInt((float)mossCount / cellsCount * 100);
-        return mossCover;
+        return mossCount;
     }
 
     private void CalcutateMossExpandion()
@@ -129,7 +183,7 @@ public class MossController : MonoBehaviour
                     if (this.grid.checkPointInGrid(point))
                     {
                         Cell testCell = grid.Cells[point.x, point.y];
-                        if (!testCell.IsAlive && Random.value > mossExpansionChance)
+                        if (!testCell.IsAlive && Random.value < currentMossExpansionChance)
                         {
                             nextGrid.Cells[point.x, point.y] = new Cell(new Point(point.x, point.y), true);
                         }

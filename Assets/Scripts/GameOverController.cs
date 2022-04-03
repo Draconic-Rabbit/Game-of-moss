@@ -20,7 +20,7 @@ public class GameOverController : MonoBehaviour
         if (scoreKeeper.isWin)
         {
             titleText.text = "You saved the day !";
-            gameoverText.text = "The world is safe. Sadly, nobody should know what happened in your lab.\nYour boss should stay ignorant of this event. You won't be fired.\nIt took you " + durationString + " seconds to perform this feat.";
+            gameoverText.text = "The world is safe. Sadly, nobody should know what happened in your lab.\nYour boss should stay ignorant of this event.\nSo, you won't be fired.\nIt took you " + durationString + " seconds to perform this feat.";
         }
         else
         {
@@ -32,7 +32,7 @@ public class GameOverController : MonoBehaviour
             else
             {
                 titleText.text = "The world is covered\nby moss.";
-                gameoverText.text = "You tried your best to protect the world from your error.\nUnfortunately, the moss you created was too efficient.\nAt least, you delayed the inevitable by " + durationString + " seconds.";
+                gameoverText.text = "You tried your best to protect the world from your error.\nUnfortunately, the moss overwhelm you by covering the majority of the laboratory.\nAt least, you delayed the inevitable by " + durationString + " seconds.";
             }
         }
     }
